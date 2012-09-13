@@ -46,7 +46,7 @@ else
 ND = "ND"
 endif
 SNMP ?= "n"
-VLAN ?= "n"
+VLAN ?= "y"
 USERPPTP ?= "n"
 PPTPD ?= "n"
 TCPDUMP ?= "n"
@@ -208,6 +208,7 @@ ifeq ($(LINKSYS_E_64),y)
 		-l E900,image/tomato-E900$(current_BUILD_USB)$(if $(filter $(NVRAM_SIZE),0),,-NVRAM$(NVRAM_SIZE)K)-$(current_TOMATO_VER).$(V1)$(mips_rev)$(beta)$(V2)-$(current_BUILD_DESC).bin \
 		-l E122,image/tomato-E1200v2$(current_BUILD_USB)$(if $(filter $(NVRAM_SIZE),0),,-NVRAM$(NVRAM_SIZE)K)-$(current_TOMATO_VER).$(V1)$(mips_rev)$(beta)$(V2)-$(current_BUILD_DESC).bin \
 		-l E150,image/tomato-E1500$(current_BUILD_USB)$(if $(filter $(NVRAM_SIZE),0),,-NVRAM$(NVRAM_SIZE)K)-$(current_TOMATO_VER).$(V1)$(mips_rev)$(beta)$(V2)-$(current_BUILD_DESC).bin \
+		-l 61XN,image/tomato-E3000$(current_BUILD_USB)$(if $(filter $(NVRAM_SIZE),0),,-NVRAM$(NVRAM_SIZE)K)-$(current_TOMATO_VER).$(V1)$(mips_rev)$(beta)$(V2)-$(current_BUILD_DESC).bin \
 		| tee -a fpkg.log
 endif
 ifeq ($(LINKSYS_E1000v2),y)
@@ -793,7 +794,15 @@ ifeq ($(CONFIG_LINUX26),y)
 else
 	@$(MAKE) bin OPENVPN=y USERPPTP=y PPTPD=y NTFS=y B=NC BUILD_DESC="$(VPN)" USB="USB" VLAN="$(VLAN)" NOCAT=y TCPDUMP="$(TCPDUMP)" BUILD_DESC+=" $(NC)"
 endif
-
+## TomatoEgg
+## Removed NTFS And MediaServer
+## with Vlan
+nce:
+ifeq ($(CONFIG_LINUX26),y)
+	@$(MAKE) bin OPENVPN=y USERPPTP=y PPTPD=y BBEXTRAS=y USBEXTRAS=y EBTABLES=y NO_LIBOPT=y IPV6SUPP=y B=NC HFS=n BUILD_DESC="$(VPN)" USB="USB" SNMP=y VLAN=y NOCAT=y TCPDUMP="$(TCPDUMP)" BUILD_DESC+="-$(NC)"
+else
+	@$(MAKE) bin OPENVPN=y USERPPTP=y PPTPD=y B=NC BUILD_DESC="$(VPN)" USB="USB" VLAN=y HFS=n NOCAT=y TCPDUMP="$(TCPDUMP)" BUILD_DESC+=" $(NC)"
+endif
 ## Toastman
 ## Make the "Mini: no USB, + NOCAT" build - for 4MB routers
 ncm:
@@ -880,6 +889,8 @@ r2n:
 
 r2nc:
 	@$(MAKE) nc MIPS32=r2
+r2nce:
+	@$(MAKE) nce MIPS32=r2
 
 r2r:
 	@$(MAKE) r MIPS32=r2
@@ -921,7 +932,8 @@ n60n:
 
 n60nc:
 	@$(MAKE) r2nc NVRAM_SIZE=60 LINKSYS_E=y
-
+n60nce:
+	@$(MAKE) r2nce NVRAM_SIZE=60 LINKSYS_E=y
 n60o:
 	@$(MAKE) r2o NVRAM_SIZE=60 LINKSYS_E=y
 
@@ -957,6 +969,9 @@ n64n:
 
 n64nc:
 	@$(MAKE) r2nc NVRAM_SIZE=64 LINKSYS_E_64=y
+
+n64nce:
+	@$(MAKE) r2nce NVRAM_SIZE=64 LINKSYS_E_64=y
 
 n64o:
 	@$(MAKE) r2o NVRAM_SIZE=64 LINKSYS_E_64=y
@@ -1053,6 +1068,7 @@ help:
 	@echo "d            D build (standard minus Samba server)"
 	@echo "m            M build (standard plus extra utilities and NTFS support)"
 	@echo "nc           NC build (standard plus VPN, extra utilities, NTFS support and NOCAT)"
+	@echo "nce          NC build (standard plus VPN, extra utilities, NOCAT)"
 	@echo "ncm	    NCS build (no USB support, NOCAT)"
 	@echo "ncs	    NCS build (std + NOCAT)"
 	@echo "m            Ext - (standard plus extra utilities and NTFS support)"
@@ -1080,6 +1096,7 @@ ifeq ($(CONFIG_LINUX26),y)
 	@echo "r2i          MIPS Release 2 I build (IPv6 with no USB support minus CIFS and RIPv1/2)"
 	@echo "r2m          MIPS Release 2 M build (standard plus extras)"
 	@echo "r2nc         MIPS Release 2 NC build (standard plus VPN, extras and NOCAT)"
+	@echo "r2nce        MIPS Release 2 NC build (standard plus VPN, extras and NOCAT,No NTFS)"
 	@echo "r2ncm        MIPS Release 2 NCM build (no USB support, plus NOCAT)"
 	@echo "r2ncs        MIPS Release 2 NCS build (standard plus NOCAT)"
 	@echo "r2s          MIPS Release 2 S build (no USB support)"
@@ -1092,6 +1109,7 @@ ifeq ($(CONFIG_LINUX26),y)
 	@echo "n60m         Linksys E-series build (60KB NVRAM, standard plus extras)"
 	@echo "n60e         Linksys E-series build (60KB NVRAM, standard plus VPN and extras)"
 	@echo "n60nc        Linksys E-series build (60KB NVRAM, standard plus extras, plus VPN, plus NOCAT)"
+	@echo "n60nce       Linksys E-series build (60KB NVRAM, standard plus extras, plus VPN, plus NOCAT,No NTFS)"
 	@echo "n60s         Linksys E-series build (60KB NVRAM, no USB support)"
 	@echo "n60v         Linksys E-series build (60KB NVRAM, VPN with no USB support)"
 

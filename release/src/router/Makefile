@@ -410,6 +410,10 @@ endif
 	$(if $(TCONFIG_USB),@cp -f,@mv) $(TARGETDIR)/lib/modules/*/kernel/fs/fuse.*o $(PLATFORMDIR)/extras/ || true
 	$(if $(TCONFIG_USB),@cp -f,@mv) $(TARGETDIR)/lib/modules/*/kernel/fs/hfs.*o $(PLATFORMDIR)/extras/ || true
 	$(if $(TCONFIG_USB),@cp -f,@mv) $(TARGETDIR)/lib/modules/*/kernel/fs/hfsplus.*o $(PLATFORMDIR)/extras/ || true
+ifneq ($(TCONFIG_HFS),y)
+	@rm -rf $(TARGETDIR)/lib/modules/*/kernel/fs/hfs.ko || true
+	@rm -rf $(TARGETDIR)/lib/modules/*/kernel/fs/hfsplus.ko || true
+endif
 
 ifneq ($(TCONFIG_USB),y)
 	@rm -rf $(TARGETDIR)/lib/modules/*/kernel/drivers/usb || true

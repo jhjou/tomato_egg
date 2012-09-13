@@ -1,10 +1,10 @@
 PATH=/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/sbin:/usr/bin
-PATH=$PATH:/home/gpl/cybertan/brcm_toolchain/tools/brcm/hndtools-mipsel-linux/bin
-PATH=$PATH:/home/gpl/cybertan/brcm_toolchain/tools/brcm/hndtools-mipsel-uclibc/bin
+PATH=$PATH:/opt/brcm/hndtools-mipsel-linux/bin
+PATH=$PATH:/opt/brcm/hndtools-mipsel-uclibc/bin
 export PATH
 
-cd release/src
-make
+cd release/src-rt
+make V1=7502 V2=-TomatoEgg n60nce
 
 cd ..
 cd ..

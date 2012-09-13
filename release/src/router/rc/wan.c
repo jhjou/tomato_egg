@@ -1014,11 +1014,11 @@ void start_wan_done(char *wan_ifname)
 #endif
 	}
 
-	if (wanup)
+	if (wanup || (proto == WP_DISABLED))
 		start_vpn_eas();
 
 #ifdef TCONFIG_USERPPTP
-	if (wanup && nvram_get_int("pptp_client_enable"))
+	if ((wanup || (proto == WP_DISABLED)) && nvram_get_int("pptp_client_enable"))
 		start_pptp_client();
 #endif
 
